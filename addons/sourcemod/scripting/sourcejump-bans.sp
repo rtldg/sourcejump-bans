@@ -72,6 +72,13 @@ public void OnClientPostAdminCheck(int client)
 		return;
 	}
 
+	AdminId admin = FindAdminByIdentity(AUTHMETHOD_STEAM, steamId);
+
+	if (admin != INVALID_ADMIN_ID && admin.HasFlag(Admin_Custom6))
+	{
+		return;
+	}
+
 	switch (gCV_Actions.IntValue)
 	{
 		case Action_Notify:
@@ -114,12 +121,7 @@ void OnBannedPlayersReceived(HTTPResponse response, any value)
 		player = view_as<JSONObject>(players.Get(i));
 		player.GetString("steamid", steamId, sizeof(steamId));
 
-		AdminId admin = FindAdminByIdentity(AUTHMETHOD_STEAM, steamId);
-
-		if (admin == INVALID_ADMIN_ID)
-		{
-			gA_SteamIds.PushString(steamId);
-		}
+		gA_SteamIds.PushString(steamId);
 
 		delete player;
 	}
@@ -134,7 +136,7 @@ public Action Shavit_OnFinishPre(int client, timer_snapshot_t snapshot)
 {
 	if (gB_TimerBanned[client])
 	{
-		PrintToChat(client, "[SourceJump] Your time did not save because your account is SourceJump banned.");
+		PrintToChat(client, "[SourceJump] Your time (%f) did not save because your account is SourceJump banned.", snapshot.fCurrentTime);
 		return Plugin_Stop;
 	}
 
