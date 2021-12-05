@@ -114,7 +114,12 @@ void OnBannedPlayersReceived(HTTPResponse response, any value)
 		player = view_as<JSONObject>(players.Get(i));
 		player.GetString("steamid", steamId, sizeof(steamId));
 
-		gA_SteamIds.PushString(steamId);
+		AdminId admin = FindAdminByIdentity(AUTHMETHOD_STEAM, steamId);
+
+		if (admin == INVALID_ADMIN_ID)
+		{
+			gA_SteamIds.PushString(steamId);
+		}
 
 		delete player;
 	}
